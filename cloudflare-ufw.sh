@@ -1,7 +1,11 @@
 #!/bin/sh
 
+cd /tmp
+wget https://www.cloudflare.com/ips-v4 -O ips-v4-$$.tmp
+wget https://www.cloudflare.com/ips-v6 -O ips-v6-$$.tmp
+
 # Allow all traffic from Cloudflare IPs (no ports restriction)
-for cfip in `curl -sw '\n' https://www.cloudflare.com/ips-v{4,6}`; do ufw allow proto tcp from $cfip comment 'Cloudflare IP'; done
+for cfip in `cat ips-v{4,6}-$$.tmp`; do ufw allow from $cfip to any port 80,443 comment 'Cloudflare IP'; done
 
 ufw reload > /dev/null
 
